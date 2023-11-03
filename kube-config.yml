@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: volunteer-data-collector
+  namespace: dev # <namespace_where_app_will_be_deployed> 
+  labels:
+    app: volunteer-data-collector
+    tier: backend
+
+spec:
+  # how many replicas/pods of the app do you want?
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: backend
+  template:
+    metadata:
+      labels:
+        tier: backend
+    spec:
+      containers:
+      - name: volunteer-data-collector
+        env: 
+        # env vars to pull from secrets in kube
+          - name: ADMIN_NAME # env name in pod
+            valueFrom: # where to pull from
+              secretKeyRef: #key/value pair from available secrets
+                    name: volunteer-data-app-secrets # Secret deployment to pull from. MUST be available in same namespace
+                    key: ADMIN_NAME # return value associated with key
+          - name: APP_LEVEL
+            valueFrom:
+              secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: APP_LEVEL
+          - name: SFTP_HOST
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: SFTP_HOST
+          - name: TWILIO_ACCOUNT_SID
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: TWILIO_ACCOUNT_SID
+          - name: TWILIO_AUTH_TOKEN
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: TWILIO_AUTH_TOKEN
+          - name: TWILIO_NUM
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: TWILIO_NUM
+          - name: MASTER_ALERT_NUM
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: MASTER_ALERT_NUM
+          - name: MASTER_SHEET_ID
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: MASTER_SHEET_ID
+          - name: MASTER_SHEET_URL
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: MASTER_SHEET_URL
+          - name: DBWH_SHEET
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: DBWH_SHEET
+          - name: PUBS_SHEET_GID
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: PUBS_SHEET_GID
+          - name: PRIVATE_KEY
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: PRIVATE_KEY
+          - name: PRIVATE_KEY_ID
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: PRIVATE_KEY_ID
+          - name: DBWH_SHEET
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: DBWH_SHEET
+          - name: PROJECT_ID
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: PROJECT_ID
+          - name: CLIENT_EMAIL
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: CLIENT_EMAIL
+          - name: CLIENT_ID
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: CLIENT_ID
+          - name: CLIENT_CERT_URL
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: CLIENT_CERT_URL
+          - name: SCRIPT_STOP_DAY
+            valueFrom:
+                secretKeyRef:
+                    name: volunteer-data-app-secrets
+                    key: SCRIPT_STOP_DAY
+
+        # image being pushed to local repository
+        # MUST ensure local image repo is set up
+        image: localhost:32000/volunteer-data-collector:local
+        imagePullPolicy: Always
+
+      restartPolicy: Always
